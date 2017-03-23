@@ -12,29 +12,42 @@
 package com.industriallogic.collections;
 
 public class List extends AbstractList {
-	private Object[] elements = new Object[10];
+    public static final int INITIAL_SIZE = 10;
+    private Object[] elements = new Object[INITIAL_SIZE];
 	private int size = 0;
 	private boolean readOnly;
+
+	public boolean getReadOnly(){
+		return readOnly;
+	}
 
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
 	public void add(Object element) {
-		if (!readOnly) {
-			int newSize = size + 1;
-			if (newSize > elements.length) {
-				Object[] newElements =
-					new Object[elements.length + 10];
-				for (int i = 0; i < size; i++)
-					newElements[i] = elements[i];
-				elements = newElements;
-			}
-			elements[size++] = element;
-		}
-	}
+        if (readOnly) {
+            return;
+        }
+        extendCapacity();
+        appendElement(element);
+    }
 
-	public boolean contains(Object element) {
+    private void extendCapacity() {
+        if (size + 1 > elements.length) {
+            Object[] newElements =
+                new Object[elements.length + INITIAL_SIZE];
+            for (int i = 0; i < size; i++)
+                newElements[i] = elements[i];
+            elements = newElements;
+        }
+    }
+
+    private void appendElement(Object element) {
+        elements[size++] = element;
+    }
+
+    public boolean contains(Object element) {
 		for (int i=0; i<size; i++) 
 			if (elements[i].equals(element))
 				return true;
